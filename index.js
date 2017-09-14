@@ -59,10 +59,69 @@ app.put('/Unbalanced', function (req, res) {
   res.send(response);
 });
 
-app.post('/test', function (req, res) {
-  res.send("localhost:3000/test\nJSON test : " + req.body.test);
+app.put('/SeverelyUnbalanced', function (req, res) {
+
+  var left = "";
+  var right = "";
+
+  var leftMostCount = 0;
+
+  var leftValue = req.body.left;
+  while(leftValue != null)
+  {
+    left = leftValue.value + left;
+    leftMostCount++;
+    leftValue = leftValue.left;
+  }
+
+  var rightMostCount = 0;
+
+  var rightValue = req.body.right;
+  while(rightValue != null)
+  {
+    right = right + rightValue.value;
+    rightMostCount++;
+    rightValue = rightValue.right;
+  }
+
+  var response = left + req.body.value + right;
+
+  var fullresponse = checkOutliers(req.body, response, (leftMostCount * -1) , rightMostCount, 0)
+
+  res.send(fullresponse);
 });
+
 
 app.listen(3000, function () {
   console.log("Listening to port 3000!");
 });
+
+function checkOutliers (root, response, leftMostCount, rightMostCount, location) {
+  var leftResponse = "";
+  var rightResponse = "";
+
+  if( location < leftMostCount)
+  {
+    leftResponse = root.value + leftResponse;
+    leftMostCount--;
+  }
+
+  if( location > rightMostCount)
+  {
+    rightResponse = rightResponse + root.value;
+    rightMostCount++;
+  }
+
+  if(root.left != null)
+  {
+    response = checkOutliers(root.left, response, leftMostCount, rightMostCount, location - 1) + leftResponse;
+  }
+  if(root.right != null)
+  {
+    response = rightResponse + checkOutliers(root.right, response, leftMostCount, rightMostCount, location + 1);
+  }
+
+
+
+  return  leftResponse + response + rightResponse ;
+}
