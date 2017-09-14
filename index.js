@@ -13,8 +13,50 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 
-app.post('/', function (req, res) {
-  res.send("localhost:3000\ntest : " + req.body.test + "\nanotha_test : " + req.body.anotha_test);
+app.put('/balanced', function (req, res) {
+
+  var left = "";
+  var right = "";
+
+  var leftValue = req.body.left;
+  while(leftValue != null)
+  {
+    left = leftValue.value + left;
+    leftValue = leftValue.left;
+  }
+
+  var rightValue = req.body.right;
+  while(rightValue != null)
+  {
+    right = right + rightValue.value;
+    rightValue = rightValue.right;
+  }
+
+  var response = left + req.body.value + right;
+  res.send(response);
+});
+
+app.put('/Unbalanced', function (req, res) {
+
+  var left = "";
+  var right = "";
+
+  var leftValue = req.body.left;
+  while(leftValue != null)
+  {
+    left = leftValue.value + left;
+    leftValue = leftValue.left;
+  }
+
+  var rightValue = req.body.right;
+  while(rightValue != null)
+  {
+    right = right + rightValue.value;
+    rightValue = rightValue.right;
+  }
+
+  var response = left + req.body.value + right;
+  res.send(response);
 });
 
 app.post('/test', function (req, res) {
